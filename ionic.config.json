@@ -1,0 +1,7 @@
+{
+  "name": "childvaccination",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}

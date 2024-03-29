@@ -17,7 +17,7 @@ const Header = ({ title }: Props) => {
                     <IonMenuButton></IonMenuButton>
                 </IonButtons>
                 <IonButtons slot='end'>
-                    <IonButton >
+                    <IonButton routerLink='/auth/notifications'>
                         <IonIcon icon={notificationIcon} />
                     </IonButton>
                 </IonButtons>

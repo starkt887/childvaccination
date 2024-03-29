@@ -1,23 +1,23 @@
-import { IonRouterOutlet } from '@ionic/react'
-import { IonReactRouter } from '@ionic/react-router'
-import React from 'react'
-import { Route } from 'react-router'
-import Dashboard from '../../pages/Dashboard'
-import ChildDetails from '../../pages/ChildDetails'
-import VaccineSchedule from '../../pages/VaccineSchedule'
+// import { IonRouterOutlet } from '@ionic/react'
+// import { IonReactRouter } from '@ionic/react-router'
+// import React from 'react'
+// import { Route } from 'react-router'
+// import Dashboard from '../../pages/Dashboard'
+// import ChildDetails from '../../pages/ChildDetails'
+// import VaccineSchedule from '../../pages/VaccineSchedule'
 
-type Props = {}
+// type Props = {}
 
-const DashboardChildRouter = (props: Props) => {
-  return (
-    <>
-      <Route exact path="/auth/dashboard/child/:id" component={ChildDetails} />
-      <Route exact path="/auth/dashboard/child/vaccineschedule/:id" component={VaccineSchedule} />
-    </>
-  )
-}
+// const DashboardChildRouter = (props: Props) => {
+//   return (
+//     <>
+//       <Route exact path="/auth/dashboard/child/:id" component={ChildDetails} />
+//       <Route exact path="/auth/dashboard/child/vaccineschedule/:id" component={VaccineSchedule} />
+//     </>
+//   )
+// }
 
-export default DashboardChildRouter
+// export default DashboardChildRouter
 
 // we removed the ionrouter outlet coz of a bug, where you keep all the routes related/accessible 
 // in one ionrouter IonRouterOutlet, adding sub routes in different IonRouterOutlet will create new 
@@ -44,3 +44,5 @@ export default DashboardChildRouter
 // 2. Creating a new IonRouterOutlet for child paths that are related to all the other internal routes
 
 
+//These will at the end will create a problem, best thing you keep all the related routes in one plage
+// New bug discovered, you can jump from 1 - 2 but not 2 - 3

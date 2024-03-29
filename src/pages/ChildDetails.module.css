@@ -1,0 +1,8 @@
+.cardinfo{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.listitem_text{
+    font-size: 12px; 
+}

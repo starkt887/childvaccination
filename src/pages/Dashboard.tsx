@@ -14,38 +14,54 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { getMyChildrenAT } from '../features/children/childrenSlice';
 import { showToast } from '../features/toast/toastSlice';
 import { IChildModal } from '../modals/childModal';
-import { getVaccineList } from '../features/vaccine/vaccineSlice';
+import { getVaccineList, setTodaysVaccines } from '../features/vaccine/vaccineSlice';
 import { IVaccinModal } from '../modals/vaccineModal';
+import { useNotificationService } from '../services/notificationService';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { firestoreDb } from '../services/firebaseService';
+import { formatDate } from '../utlils/dateFormater';
 
 const Dashboard: React.FC = () => {
 
-  const uid = useAppSelector<string>(state => state.userReducer.userAuth.uid)
+  const uid = useAppSelector<string>(state => state.userReducer.userInfo.uid)
   const children = useAppSelector(state => state.childrenReducer.children)
 
 
   const dispatch = useAppDispatch()
   const [isAddChildOpen, setIsAddChildOpen] = useState(false)
 
+  const { vaccineReminders, setVaccineReminders, subscribeToTodaysVaccineDate } = useNotificationService()
+
   useEffect(() => {
-    dispatch(getMyChildrenAT(uid)).unwrap().catch((error) => {
-      console.log("unwrap catch:");
-      console.log(error);
-      dispatch(showToast({ msg: "Unable to load children", color: "danger" }))
-    })
+    dispatch(getMyChildrenAT(uid)).unwrap()
+      .then((responseChidlren) => {
+        console.log("Children loaded", responseChidlren)
+        subscribeToTodaysVaccineDate(responseChidlren)//notification listener
+      }).catch((error) => {
+        console.log("unwrap catch:");
+        console.log(error);
+        dispatch(showToast({ msg: "Unable to load children", color: "danger" }))
+      })
+
     dispatch(getVaccineList()).unwrap().then((resp) => {
       console.log(resp)
     }).catch((error: any) => {
       console.log(error)
     })
 
-
   }, [])
 
-  const vaccineList = useAppSelector(state => state.vaccineReducer.vaccineList)
   useEffect(() => {
-    // console.log(vaccineList)
-    console.log(vaccineList)
-  }, [vaccineList])
+    console.log("Vaccine reminders", vaccineReminders)
+    // as soon as listener initilizes the vaccineReminders, settle in with vaccineSlice
+    dispatch(setTodaysVaccines(vaccineReminders))
+  
+  }, [vaccineReminders])
+
+
+
+
+
   return (
     <>
       {/* <SlideMenu /> */}

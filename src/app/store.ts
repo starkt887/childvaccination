@@ -3,13 +3,15 @@ import userReducer from "../features/auth/authSlice"
 import toastReducer from "../features/toast/toastSlice"
 import childrenReducer from "../features/children/childrenSlice"
 import vaccineReducer from "../features/vaccine/vaccineSlice"
+import hospitalReducer from "../features/hosipital/hospitalSlice"
 
 export const store = configureStore({
     reducer: {
         userReducer,
         toastReducer,
         childrenReducer,
-        vaccineReducer
+        vaccineReducer,
+        hospitalReducer
     }
 })
 

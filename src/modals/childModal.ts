@@ -1,3 +1,5 @@
+import { IVaccinModal } from "./vaccineModal"
+
 export interface IChildModal {
     id?: string
     name: string
@@ -6,4 +8,9 @@ export interface IChildModal {
     hospital: string
     location: string
     parentId: string
+}
+
+export type ReminderModal = {
+    childData: IChildModal,
+    vaccines: IVaccinModal[]
 }

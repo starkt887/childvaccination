@@ -31,7 +31,11 @@ const VaccineList = (props: Props) => {
         <IonAccordionGroup expand="inset">
           {
             vaccineList.map((vaccineGroup: IVaccinModal[]) => {
-              return <VaccineGroup readOnly={true} key={vaccineGroup.at(0)?.id} id={vaccineGroup.at(0)?.id!} vaccineGroup={vaccineGroup} />
+              return <VaccineGroup
+                readOnly={true}
+                key={vaccineGroup.at(0)?.id}
+                id={vaccineGroup.at(0)?.id!}
+                vaccineGroup={vaccineGroup} />
             })
           }
 

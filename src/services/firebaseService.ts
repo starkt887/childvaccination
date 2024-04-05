@@ -2,17 +2,18 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
+import { ENV } from "../utlils/envGetter";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDVWPwg5ULlXUgV1gP3KyxRTQeEQUEvccE",
-    authDomain: "childvaccination-9fba7.firebaseapp.com",
-    projectId: "childvaccination-9fba7",
-    storageBucket: "childvaccination-9fba7.appspot.com",
-    messagingSenderId: "737876463873",
-    appId: "1:737876463873:web:a68dc56778d21043ae8b00"
+    apiKey: ENV.VITE_APIKEY,
+    authDomain: ENV.VITE_AUTHDOMAIN,
+    projectId: ENV.VITE_PROJECTID,
+    storageBucket: ENV.VITE_STORAGEBUCKET,
+    messagingSenderId: ENV.VITE_MESSAGINGSENDERID,
+    appId: ENV.VITE_APPID
 };
 
 // Initialize Firebase

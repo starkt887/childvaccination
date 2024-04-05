@@ -1,64 +1,41 @@
-import { IonButton, IonContent, IonImg, IonInput, IonItem, IonList, IonPage, IonTextarea, IonThumbnail } from '@ionic/react'
-import React from 'react'
+import { IonButton, IonContent, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonTextarea, IonThumbnail } from '@ionic/react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
+import { useAppSelector } from '../app/hooks'
+import { IonSegmentCustomEvent, SegmentChangeEventDetail } from '@ionic/core'
+import MyProfile from '../components/MyProfile'
+import MySecurity from '../components/MySecurity'
 
 type Props = {}
 
 const Profile = (props: Props) => {
+  const userInfo = useAppSelector(state => state.userReducer.userInfo)
+
+  const [segment, setSegment] = useState<string>("profile")
+
+
+  const changeView = (e: IonSegmentCustomEvent<SegmentChangeEventDetail>) => {
+    setSegment(e.detail.value?.toString()!)
+  }
+
   return (
     <IonPage >
       <Header title='Profile' />
-      <IonContent fullscreen class='ion-padding'>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <IonThumbnail style={{ height: '100px', width: '100px' }}>
-            <IonImg
-              src="https://ionic-docs-demo-v7.vercel.app/assets/madison.jpg"
-              alt="The Wisconsin State Capitol building in Madison, WI at night"
-            />
-          </IonThumbnail>
-        </div>
-        <IonList>
 
-          <IonItem>
-            <IonInput
-              label="Name"
-              labelPlacement="floating"
-              placeholder='Enter your name'
-              type="text"
-              readonly
-            />
-          </IonItem>
-          <IonItem>
-            <IonInput
-              label="Email"
-              labelPlacement="floating"
-              placeholder='Enter your email'
-              type="text"
-              readonly
-            />
-          </IonItem>
-          <IonItem>
-            <IonInput
-              label="Mobile"
-              labelPlacement="floating"
-              placeholder='Enter mobile no'
-              type="text"
-              readonly
-              helperText='Enter valid mobileno'
-            />
-          </IonItem>
-          <IonItem>
-            <IonTextarea
-              label="Address"
-              labelPlacement="floating"
-              placeholder="Enter your address"
-              autoGrow />
+      <IonContent fullscreen >
+        <IonSegment value={segment} color="tertiary" onIonChange={(e) => changeView(e)}>
+          <IonSegmentButton value="profile">
+            <IonLabel>Profile</IonLabel>
+          </IonSegmentButton>
+          <IonSegmentButton value="security">
+            <IonLabel>Security</IonLabel>
+          </IonSegmentButton>
+        </IonSegment>
 
-          </IonItem>
-        </IonList>
-        <IonButton expand="block">
-          Submit
-        </IonButton>
+        {segment === "profile" ?
+          <MyProfile /> :
+          <MySecurity />}
+
       </IonContent>
     </IonPage>
   )

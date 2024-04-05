@@ -20,7 +20,7 @@ const AddEditChild = ({ childDetails, isModalOpen, setIsModalOpen }: Props) => {
     // const modal = useRef<HTMLIonModalElement>(null);
     // const input = useRef<HTMLIonInputElement>(null);
     const { addNewChild, updateChild } = useChildService()
-    const uid = useAppSelector<string>(state => state.userReducer.userAuth.uid)
+    const uid = useAppSelector<string>(state => state.userReducer.userInfo.uid)
     const vaccineList = useAppSelector<IVaccinModal[][]>(state => state.vaccineReducer.vaccineList)
     const dispatch = useAppDispatch()
     const [name, setName] = useState<string>("")
@@ -48,7 +48,7 @@ const AddEditChild = ({ childDetails, isModalOpen, setIsModalOpen }: Props) => {
             return;
         }
         console.log('Added new child')
-        let status = await Promise.resolve(addNewChild(childData,vaccineList))
+        let status = await Promise.resolve(addNewChild(childData, vaccineList))
         postAddUpdateChild(status, "add")
     }
 
@@ -60,7 +60,7 @@ const AddEditChild = ({ childDetails, isModalOpen, setIsModalOpen }: Props) => {
                 if (childDetails)
                     dispatch(setCurrentChild(childDetails?.id!))
             }) //refresh children state and set current child
-
+            resetData()
             setIsModalOpen(false)
             return
         }
@@ -80,6 +80,15 @@ const AddEditChild = ({ childDetails, isModalOpen, setIsModalOpen }: Props) => {
             setGender(childDetails.gender)
             setHospital(childDetails.hospital)
             setLocation(childDetails.location)
+        }
+    }
+    const resetData = () => {
+        if (childDetails) {
+            setName("")
+            setDob(new Date().toDateString())
+            setGender("")
+            setHospital("")
+            setLocation("")
         }
     }
 

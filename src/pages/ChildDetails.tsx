@@ -12,6 +12,7 @@ import { useParams } from 'react-router'
 import { IChildModal } from '../modals/childModal'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { setCurrentChild } from '../features/children/childrenSlice'
+import { getMyVaccineList } from '../features/vaccine/vaccineSlice'
 
 type Params = {
   id: string
@@ -21,12 +22,14 @@ const ChildDetails = () => {
 
   const { id } = useParams<Params>()
   const currentChild = useAppSelector<IChildModal>(state => state.childrenReducer.currentChild)
+  const myChildVaccineList = useAppSelector<IVaccinModal[][]>(state => state.vaccineReducer.childVaccineList!)
   const dispatch = useAppDispatch()
 
   const [isEditChildOpen, setIsEditChildOpen] = useState(false)
   useEffect(() => {
     // console.log("Params:", id)
     dispatch(setCurrentChild(id))
+    dispatch(getMyVaccineList(id))
   }, [])
 
   return (
@@ -55,12 +58,13 @@ const ChildDetails = () => {
 
         <IonAccordionGroup expand="inset">
           {
-            vaccineData.map((vaccineGroup: IVaccinModal[]) => {
-              return <VaccineGroup 
-              readOnly={false}
-              key={vaccineGroup.at(0)?.id} 
-              id={vaccineGroup.at(0)?.id!} 
-              vaccineGroup={vaccineGroup} />
+            myChildVaccineList.map((vaccineGroup: IVaccinModal[]) => {
+              return <VaccineGroup
+                readOnly={false}
+                key={vaccineGroup.at(0)?.id}
+                id={vaccineGroup.at(0)?.id!}
+                vaccineGroup={vaccineGroup}
+                dob={currentChild.dob} />
             })
           }
 

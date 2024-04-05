@@ -5,12 +5,14 @@ import Dashboard from './pages/Dashboard';
 import Router from './router/Router';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { resetToast } from './features/toast/toastSlice';
+import { useCalendarService } from './services/calendarService';
 
 
 const App = () => {
 
   const { isOpen, toast, interval } = useAppSelector(state => state.toastReducer)
   const dispatch = useAppDispatch()
+
 
   return (
     <IonApp>

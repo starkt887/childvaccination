@@ -21,13 +21,22 @@ import {
 } from 'ionicons/icons'
 import { useAppDispatch } from '../app/hooks'
 import { logoutUser } from '../features/auth/authSlice'
+import { signOut } from 'firebase/auth'
+import { auth } from '../services/firebaseService'
 
 const SlideMenu = () => {
 
     const dispatch = useAppDispatch()
 
     const logout = () => {
-        dispatch(logoutUser())
+        signOut(auth).then(() => {
+            // Sign-out successful.
+            dispatch(logoutUser())
+        }).catch((error) => {
+            // An error happened.
+        });
+
+
     }
 
     return (

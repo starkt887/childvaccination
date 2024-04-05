@@ -2,7 +2,6 @@ import { IonRouterOutlet } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import React from 'react'
 import { Redirect, Route } from 'react-router'
-import DashboardChildRouter from './internalsubroutes/DashboardChildRouter'
 import VaccineList from '../pages/VaccineList'
 import Reports from '../pages/Reports'
 import About from '../pages/About'
@@ -14,6 +13,7 @@ import SlideMenu from '../components/SlideMenu'
 import Profile from '../pages/Profile'
 import VaccineSchedule from '../pages/VaccineSchedule'
 import Dashboard from '../pages/Dashboard'
+import ChildDetails from '../pages/ChildDetails'
 
 type Props = {}
 
@@ -23,8 +23,9 @@ const InternalRouter = (props: Props) => {
             <SlideMenu />
             <IonRouterOutlet id='ion-router-outlet'>
                 <Route exact path="/auth/dashboard" component={Dashboard} />
-                <Route path="/auth/dashboard/child" component={DashboardChildRouter} />
-
+                <Route exact path="/auth/dashboard/child/:id" component={ChildDetails} />
+                <Route exact path="/auth/dashboard/child/vaccineschedule/:id" component={VaccineSchedule} />
+            
                 <Route exact path="/auth/vaccinationlist" component={VaccineList} />
                 <Route exact path="/auth/reports" component={Reports} />
                 <Route exact path="/auth/about" component={About} />

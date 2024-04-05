@@ -16,10 +16,29 @@ import {
     lockClosed as privacyIcon,
     share as shareIcon,
     starHalf as rateIcon,
-    power as logoutIcon
+    power as logoutIcon,
+    person as profileIcon
 } from 'ionicons/icons'
+import { useAppDispatch } from '../app/hooks'
+import { logoutUser } from '../features/auth/authSlice'
+import { signOut } from 'firebase/auth'
+import { auth } from '../services/firebaseService'
 
 const SlideMenu = () => {
+
+    const dispatch = useAppDispatch()
+
+    const logout = () => {
+        signOut(auth).then(() => {
+            // Sign-out successful.
+            dispatch(logoutUser())
+        }).catch((error) => {
+            // An error happened.
+        });
+
+
+    }
+
     return (
         <IonMenu contentId="ion-router-outlet">
             <IonHeader>
@@ -70,8 +89,20 @@ const SlideMenu = () => {
                             Notifications
                         </IonLabel>
                     </IonItem>
+                    <IonItem button lines='full' routerLink='/auth/profile' routerDirection='none'>
+                        <IonIcon icon={profileIcon} slot='start' />
+                        <IonLabel>
+                            Profile
+                        </IonLabel>
+                    </IonItem>
+                    <IonItem button lines='full' onClick={logout}>
+                        <IonIcon icon={logoutIcon} slot='start' />
+                        <IonLabel>
+                            Logout
+                        </IonLabel>
+                    </IonItem>
                     {/* Information links */}
-                    <IonItemGroup>
+                    {/* <IonItemGroup>
                         <IonItemDivider>
                             <IonLabel>Information</IonLabel>
                         </IonItemDivider>
@@ -94,9 +125,9 @@ const SlideMenu = () => {
                                 Privacy Policy
                             </IonLabel>
                         </IonItem>
-                    </IonItemGroup>
+                    </IonItemGroup> */}
                     {/* Other Links */}
-                    <IonItemGroup>
+                    {/* <IonItemGroup>
                         <IonItemDivider>
                             <IonLabel>Other</IonLabel>
                         </IonItemDivider>
@@ -113,7 +144,7 @@ const SlideMenu = () => {
                                 Rate Us
                             </IonLabel>
                         </IonItem>
-                    </IonItemGroup>
+                    </IonItemGroup> */}
                 </IonList>
             </IonContent>
         </IonMenu>

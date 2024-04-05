@@ -20,6 +20,8 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import { setupIonicReact } from '@ionic/react';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
 
 setupIonicReact();
 
@@ -27,6 +29,8 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 );

@@ -1,0 +1,21 @@
+.col{
+    margin: 5px 5px 5px 5px;
+    background: #d6d6d6;
+    padding: 10px;
+    border-radius: 8px;
+}
+.col .labelflex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+.col .labeltitle{
+    font-size: 18px
+}
+.col .labelvalue{
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bolder;
+}

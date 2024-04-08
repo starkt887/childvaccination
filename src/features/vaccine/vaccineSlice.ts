@@ -4,6 +4,8 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { firestoreDb } from "../../services/firebaseService";
 import { build } from "ionicons/icons";
 import { ReminderModal } from "../../modals/childModal";
+import { AsyncThunkConfig, GetThunkAPI } from "@reduxjs/toolkit/dist/createAsyncThunk";
+import { loadDone, loadPending } from "../loader/loaderSlice";
 
 
 interface IVaccineState {
@@ -37,7 +39,8 @@ function formatVaccinesInGroups(vaccineDocs: IVaccinModal[]): IVaccinModal[][] {
     return vaccineGroup
 }
 export const getVaccineList = createAsyncThunk("vaccineSlice/getVaccineList",
-    async () => {
+    async (arg, thunkAPI: GetThunkAPI<AsyncThunkConfig>) => {
+        thunkAPI.dispatch(loadPending())
         const vaccineQuery = query(collection(firestoreDb, "vaccinelist"), orderBy("afterdays"))
         const vaccineSnapshot = await (await getDocs(vaccineQuery)).docs
         let vaccineDocs: IVaccinModal[] = vaccineSnapshot.map(vaccine => ({ id: vaccine.id, ...vaccine.data() } as IVaccinModal))
@@ -45,12 +48,14 @@ export const getVaccineList = createAsyncThunk("vaccineSlice/getVaccineList",
 
         //grouping the vaccines based on dayIntervals
         let vaccineGroup = formatVaccinesInGroups(vaccineDocs)
+        thunkAPI.dispatch(loadDone())
         return vaccineGroup;
     })
 
 export const getMyVaccineList = createAsyncThunk("vaccineSlice/getMyVaccineList",
-    async (childId: string) => {
+    async (childId: string, thunkAPI: GetThunkAPI<AsyncThunkConfig>) => {
         // console.log(childId)
+        thunkAPI.dispatch(loadPending())
         const vaccineQuery = query(collection(firestoreDb, "children", childId, "vaccinelist"), orderBy("afterdays"))
         const vaccineSnapshot = await (await getDocs(vaccineQuery)).docs
         let vaccineDocs: IVaccinModal[] = vaccineSnapshot.map(vaccine => ({ id: vaccine.id, ...vaccine.data() } as IVaccinModal))
@@ -58,6 +63,7 @@ export const getMyVaccineList = createAsyncThunk("vaccineSlice/getMyVaccineList"
 
         //grouping the vaccines based on dayIntervals
         let vaccineGroup = formatVaccinesInGroups(vaccineDocs)
+        thunkAPI.dispatch(loadDone())
         return vaccineGroup;
     })
 

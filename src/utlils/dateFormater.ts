@@ -12,6 +12,12 @@ export function formatTOISO(date: string) {
     // console.log(formattedString)
     return formattedString
 }
+export function formatDateToCalendar(date: string): string {
+    let formattedString = dayjs(date).format('YYYY-MM-DD')
+    // console.log(date)
+    // console.log(formattedString)
+    return formattedString
+}
 
 export function intoDaysMonthsYear(numberOfDays: number): string {
     let years = Math.floor(numberOfDays / 365);
@@ -45,6 +51,6 @@ export function isScheduleDateValid(scheduleDate: string): boolean {
 }
 
 export function subInteralToScheduleDay(scheduleDate: string) {
-    let startDateTime = dayjs(scheduleDate).subtract(1, "day")
-    return startDateTime.toISOString()
+    let startDate = dayjs(scheduleDate).subtract(1, "day").format('YYYY-MM-DD')
+    return startDate
 }

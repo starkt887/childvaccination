@@ -1,18 +1,47 @@
 import { addDoc, collection, doc, getDocs, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
-import { firestoreDb } from "./firebaseService";
+import { fireStorage, firestoreDb } from "./firebaseService";
 import { IChildModal } from "../modals/childModal";
 import { useState } from "react";
 import { IVaccinModal } from "../modals/vaccineModal";
 import { nanoid } from "@reduxjs/toolkit";
 import { user, userInformation } from "../features/auth/authSlice";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 
 export function useChildService() {
 
 
-    async function addNewChild(childData: IChildModal, vaccineList: IVaccinModal[][]): Promise<boolean> {
+    async function uploadProfileImg(parentId: string, name: string, dob: string, profilePicture: string): Promise<string> {
+
+        try {
+            const response = await fetch(profilePicture)
+            const blobFile = await response.blob()
+            const storageRef = ref(fireStorage, `users/${parentId}/children/${name}_${dob}}.jpg`);
+            return await uploadBytes(storageRef, blobFile).then(async (snapshot) => {
+                console.log('Uploaded a blob or file!');
+                return await getDownloadURL(snapshot.ref)
+            });
+        } catch (error) {
+            console.log("Upload error:", error);
+
+            return ""
+        }
+    }
+
+    async function addNewChild(childData: IChildModal, profilePicture: string, vaccineList: IVaccinModal[][]): Promise<boolean> {
         try {
             // create new schedule in children / schedule / collecton while adding new child
+            if (profilePicture) {
+                let profilepic = await Promise.resolve(uploadProfileImg(
+                    childData.parentId,
+                    childData.name,
+                    childData.dob,
+                    profilePicture))
+                console.log(profilepic);
+                if (profilepic)
+                    childData.profilepic = profilepic
+
+            }
 
             let tempvaccine: IVaccinModal[] = vaccineList.flat(1)
 
@@ -40,9 +69,20 @@ export function useChildService() {
             return false
         }
     }
-    async function updateChild(childData: IChildModal, id: string): Promise<boolean> {
+    async function updateChild(childData: IChildModal, profilePicture: string, id: string): Promise<boolean> {
         try {
             console.log(id)
+            if (profilePicture) {
+                let profilepic = await Promise.resolve(uploadProfileImg(
+                    childData.parentId,
+                    childData.name,
+                    childData.dob,
+                    profilePicture))
+                console.log(profilepic);
+                if (profilepic)
+                    childData.profilepic = profilepic
+
+            }
             await setDoc(doc(firestoreDb, "children", id), {
                 ...childData
             })

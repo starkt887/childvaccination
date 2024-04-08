@@ -4,6 +4,7 @@ import {
     IonIcon, IonItem,
     IonItemDivider, IonItemGroup,
     IonLabel, IonList, IonMenu,
+    IonMenuToggle,
     IonThumbnail, IonTitle, IonToolbar
 } from '@ionic/react'
 import {
@@ -19,13 +20,13 @@ import {
     power as logoutIcon,
     person as profileIcon
 } from 'ionicons/icons'
-import { useAppDispatch } from '../app/hooks'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { logoutUser } from '../features/auth/authSlice'
 import { signOut } from 'firebase/auth'
 import { auth } from '../services/firebaseService'
 
 const SlideMenu = () => {
-
+    const { name, email, profilepic } = useAppSelector(state => state.userReducer.userInfo)
     const dispatch = useAppDispatch()
 
     const logout = () => {
@@ -43,66 +44,67 @@ const SlideMenu = () => {
         <IonMenu contentId="ion-router-outlet">
             <IonHeader>
                 <IonToolbar>
-                    <IonTitle>Menu Content</IonTitle>
-                    <IonButtons slot='end'>
+                    <IonTitle>Menu</IonTitle>
+                    {/* <IonButtons slot='end'>
                         <IonButton fill='solid' shape='round'>
                             <IonIcon icon={logoutIcon} />
                         </IonButton>
-                    </IonButtons>
+                    </IonButtons> */}
                 </IonToolbar>
             </IonHeader>
             <IonContent >
-                <IonList>
+                <IonMenuToggle>
+                    <IonList>
 
-                    <IonItemDivider>
-                        <IonThumbnail slot="start">
-                            <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-                        </IonThumbnail>
-                        <IonLabel>
-                            <h2>Name</h2>
-                            <h3>email</h3>
-                        </IonLabel>
-                    </IonItemDivider>
+                        <IonItemDivider>
+                            <IonThumbnail slot="start">
+                                <img alt="Silhouette of mountains" src={profilepic} />
+                            </IonThumbnail>
+                            <IonLabel>
+                                <h2>{name}</h2>
+                                <h3>{email}</h3>
+                            </IonLabel>
+                        </IonItemDivider>
 
-                    <IonItem button lines='full' routerLink='/auth/dashboard' routerDirection='none'>
-                        <IonIcon icon={homeIcon} slot='start' />
-                        <IonLabel>
-                            Dashboard
-                        </IonLabel>
-                    </IonItem>
+                        <IonItem button lines='full' routerLink='/auth/dashboard' routerDirection='none'>
+                            <IonIcon icon={homeIcon} slot='start' />
+                            <IonLabel>
+                                Dashboard
+                            </IonLabel>
+                        </IonItem>
 
-                    <IonItem button lines='full' routerLink='/auth/reports' routerDirection='none'>
-                        <IonIcon icon={reportIcon} slot='start' />
-                        <IonLabel>
-                            Reports
-                        </IonLabel>
-                    </IonItem>
-                    <IonItem button lines='full' routerLink='/auth/vaccinationlist' routerDirection='none'>
-                        <IonIcon icon={listIcon} slot='start' />
-                        <IonLabel>
-                            Vaccine List
-                        </IonLabel>
-                    </IonItem>
-                    <IonItem button lines='full' routerLink='/auth/notifications' routerDirection='none'>
-                        <IonIcon icon={notificationIcon} slot='start' />
-                        <IonLabel>
-                            Notifications
-                        </IonLabel>
-                    </IonItem>
-                    <IonItem button lines='full' routerLink='/auth/profile' routerDirection='none'>
-                        <IonIcon icon={profileIcon} slot='start' />
-                        <IonLabel>
-                            Profile
-                        </IonLabel>
-                    </IonItem>
-                    <IonItem button lines='full' onClick={logout}>
-                        <IonIcon icon={logoutIcon} slot='start' />
-                        <IonLabel>
-                            Logout
-                        </IonLabel>
-                    </IonItem>
-                    {/* Information links */}
-                    {/* <IonItemGroup>
+                        {/* <IonItem button lines='full' routerLink='/auth/reports' routerDirection='none'>
+                            <IonIcon icon={reportIcon} slot='start' />
+                            <IonLabel>
+                                Reports
+                            </IonLabel>
+                        </IonItem> */}
+                        <IonItem button lines='full' routerLink='/auth/vaccinationlist' routerDirection='none'>
+                            <IonIcon icon={listIcon} slot='start' />
+                            <IonLabel>
+                                Vaccine List
+                            </IonLabel>
+                        </IonItem>
+                        <IonItem button lines='full' routerLink='/auth/notifications' routerDirection='none'>
+                            <IonIcon icon={notificationIcon} slot='start' />
+                            <IonLabel>
+                                Notifications
+                            </IonLabel>
+                        </IonItem>
+                        <IonItem button lines='full' routerLink='/auth/profile' routerDirection='none'>
+                            <IonIcon icon={profileIcon} slot='start' />
+                            <IonLabel>
+                                Profile
+                            </IonLabel>
+                        </IonItem>
+                        <IonItem button lines='full' onClick={logout}>
+                            <IonIcon icon={logoutIcon} slot='start' />
+                            <IonLabel>
+                                Logout
+                            </IonLabel>
+                        </IonItem>
+                        {/* Information links */}
+                        {/* <IonItemGroup>
                         <IonItemDivider>
                             <IonLabel>Information</IonLabel>
                         </IonItemDivider>
@@ -126,8 +128,8 @@ const SlideMenu = () => {
                             </IonLabel>
                         </IonItem>
                     </IonItemGroup> */}
-                    {/* Other Links */}
-                    {/* <IonItemGroup>
+                        {/* Other Links */}
+                        {/* <IonItemGroup>
                         <IonItemDivider>
                             <IonLabel>Other</IonLabel>
                         </IonItemDivider>
@@ -145,7 +147,8 @@ const SlideMenu = () => {
                             </IonLabel>
                         </IonItem>
                     </IonItemGroup> */}
-                </IonList>
+                    </IonList>
+                </IonMenuToggle>
             </IonContent>
         </IonMenu>
     )

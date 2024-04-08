@@ -4,6 +4,7 @@ import toastReducer from "../features/toast/toastSlice"
 import childrenReducer from "../features/children/childrenSlice"
 import vaccineReducer from "../features/vaccine/vaccineSlice"
 import hospitalReducer from "../features/hosipital/hospitalSlice"
+import loaderReducer from "../features/loader/loaderSlice"
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
         toastReducer,
         childrenReducer,
         vaccineReducer,
-        hospitalReducer
+        hospitalReducer,
+        loaderReducer
     }
 })
 

@@ -8,6 +8,7 @@ export interface IChildModal {
     hospital: string
     location: string
     parentId: string
+    profilepic?:string
 }
 
 export type ReminderModal = {

@@ -1,9 +1,12 @@
-import { IonButton, IonContent, IonImg, IonInput, IonItem, IonList, IonTextarea, IonThumbnail } from '@ionic/react'
-import React, { useState } from 'react'
+import { IonAvatar, IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonRow, IonTextarea, IonThumbnail, isPlatform } from '@ionic/react'
+import React, { ChangeEvent, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useUserService } from '../services/userService'
 import { getUserProfile, userInformation } from '../features/auth/authSlice'
 import { showToast } from '../features/toast/toastSlice'
+import { addCircle as editIcon } from 'ionicons/icons'
+import { Camera, CameraResultType } from '@capacitor/camera'
+import { loadDone, loadPending } from '../features/loader/loaderSlice'
 
 
 
@@ -12,16 +15,18 @@ const MyProfile = () => {
     const userInfo = useAppSelector(state => state.userReducer.userInfo)
     const dispatch = useAppDispatch()
     const { updateProfile } = useUserService()
-
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const [name, setName] = useState<string>(userInfo.name)
     const [email, setEmail] = useState<string>(userInfo.email)
     const [mobile, setMobile] = useState<string>(userInfo.mobile!)
     const [address, setAddress] = useState<string>(userInfo.address!)
+    const [selectedImage, setSelectedImage] = useState<string>(userInfo.profilepic!)
 
     const [nameError, setNameError] = useState<string>("")
     const [emailError, setEmailError] = useState<string>("")
     const [mobileError, setMobileError] = useState<string>("")
+
 
     const isFormValid = () => {
         let isValid = true;
@@ -57,8 +62,10 @@ const MyProfile = () => {
         }
         return isValid
     }
+
     const submitProfileUpdates = async () => {
         if (isFormValid()) {
+            dispatch(loadPending())
             let user: userInformation = {
                 uid: userInfo.uid,
                 name,
@@ -66,27 +73,74 @@ const MyProfile = () => {
                 mobile,
                 address: address ? address : "",
             }
-            const result = await Promise.resolve(updateProfile(user))
+
+            const result = await Promise.resolve(updateProfile(user, selectedImage!))
             if (result) {
+                dispatch(loadDone())
                 dispatch(getUserProfile(userInfo.uid))
                 dispatch(showToast({ msg: "Profile Update....Success!", color: "success" }))
                 return;
             }
+            dispatch(loadDone())
             dispatch(showToast({ msg: "Profile Update....Failed!", color: "danger" }))
+        }
+    }
+
+
+
+
+    const selectFile = async () => {
+        if (isPlatform('capacitor')) //android & ios
+        {
+            try {
+                const photo = await Camera.getPhoto({
+                    resultType: CameraResultType.Uri,
+                    quality: 70,
+                })
+                setSelectedImage(photo.webPath!)
+                console.log("Camera photo:", photo.webPath)
+            } catch (error) {
+                console.log("Error:", error)
+            }
+        }
+        else
+            inputRef.current!.click()
+    }
+    const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            console.log(e.target.files[0]);
+            if (selectedImage) {
+                URL.revokeObjectURL(selectedImage)
+            }
+            let fileUrl = URL.createObjectURL(e.target.files[0])
+            setSelectedImage(fileUrl)
         }
     }
 
     return (
         <IonContent class='ion-padding'>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <IonThumbnail style={{ height: '100px', width: '100px' }}>
-                    <IonImg
-                        src="https://ionic-docs-demo-v7.vercel.app/assets/madison.jpg"
-                        alt="The Wisconsin State Capitol building in Madison, WI at night"
-                    />
-                </IonThumbnail>
+                <img style={{
+                    width: "100px",
+                    height: "100px",
+                    borderRadius: "20px",
+                    cursor: "pointer"
+                }}
+                    src={selectedImage}
+                    onClick={(e) => selectFile()}
+                />
+                <IonIcon style={{
+                    position: "absolute",
+                    top: "90px",
+                    right: "35%",
+                    background: "#e9f7ca",
+                    padding: "5px",
+                    borderRadius: " 50px",
+                    boxShadow: "0px 0px 10px #000000, 0 0 10px #ffffff"
+                }} icon={editIcon} color="tertiary" />
+                <input ref={inputRef} type='file' onChange={(e) => onFileChange(e)} hidden />
             </div>
-            <IonList>
+            <IonList >
                 <p style={{
                     fontSize: "12px",
                     color: "red",

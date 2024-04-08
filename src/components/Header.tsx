@@ -22,7 +22,7 @@ const Header = ({ title, hideNotificaiton = false }: Props) => {
                 <IonButtons slot='end'>
                     {!hideNotificaiton &&
                         <IonButton routerLink='/auth/notifications' >
-                            <IonChip>
+                            <IonChip color="tertiary">
                                 <IonIcon icon={notificationIcon}></IonIcon>
                                 {vaccinesForTodayLength !== 0 &&
                                     <IonBadge color="primary">{vaccinesForTodayLength}</IonBadge>}

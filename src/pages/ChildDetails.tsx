@@ -5,7 +5,6 @@ import { pencil as editIcon, warning as warningIcon, checkbox as checkboxIcon } 
 import classes from './ChildDetails.module.css'
 import VaccineList from './VaccineList'
 import VaccineGroup from '../components/VaccineGroup'
-import { vaccineData } from '../modals/data'
 import { IVaccinModal } from '../modals/vaccineModal'
 import AddEditChild from '../components/AddEditChild'
 import { useParams } from 'react-router'
@@ -38,7 +37,11 @@ const ChildDetails = () => {
       <IonContent fullscreen class='ion-padding'>
         <AddEditChild childDetails={currentChild!} isModalOpen={isEditChildOpen} setIsModalOpen={(isOpen) => setIsEditChildOpen(isOpen)} />
         <IonCard>
-          <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+          <div style={{
+            height: "150px",
+            background: `url(${currentChild.profilepic}) center/cover`,
+          }}>
+          </div>
           <IonCardHeader>
             <IonCardTitle>{currentChild?.name}</IonCardTitle>
             <IonCardSubtitle>{currentChild?.dob}</IonCardSubtitle>

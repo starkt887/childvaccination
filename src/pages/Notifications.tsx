@@ -8,6 +8,7 @@ import { formatDate } from '../utlils/dateFormater'
 import { IVaccinModal } from '../modals/vaccineModal'
 import { useNotificationService } from '../services/notificationService'
 import { ReminderModal } from '../modals/childModal'
+import { IonSelectCustomEvent, SelectChangeEventDetail } from '@ionic/core'
 
 const Notifications = () => {
 
@@ -20,8 +21,8 @@ const Notifications = () => {
     setReminders(vaccinesForToday!)
   }, [])
 
-  const onFilterChange = async (e) => {
-    setFilterOption(e.detail.value)
+  const onFilterChange = async (e: IonSelectCustomEvent<SelectChangeEventDetail<any>>) => {
+    setFilterOption(e.detail.value.toString())
     if (e.detail.value === "Completed") {
       let vaccinesCompleted = await Promise.resolve(getCompletedVaccines(children))
       console.log(vaccinesCompleted)

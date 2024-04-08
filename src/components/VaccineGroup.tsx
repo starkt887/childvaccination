@@ -1,4 +1,4 @@
-import { IonAccordion, IonIcon, IonItem, IonLabel, IonList, IonText } from '@ionic/react'
+import { IonAccordion, IonIcon, IonImg, IonItem, IonLabel, IonList, IonText } from '@ionic/react'
 import React from 'react'
 import {
     pencil as editIcon,
@@ -11,11 +11,14 @@ import {
 import { IVaccinModal } from '../modals/vaccineModal'
 import { useHistory } from 'react-router'
 import { addIntervalToDOB, intoDaysMonthsYear } from '../utlils/dateFormater'
+import injection from "../assets/injection.png"
+
 type Props = {
     id: string,
     vaccineGroup: IVaccinModal[],
+    readOnly: boolean,
     dob?: string,
-    readOnly: boolean
+
 }
 
 const VaccineGroup = ({ id, vaccineGroup, dob, readOnly }: Props) => {
@@ -42,7 +45,7 @@ const VaccineGroup = ({ id, vaccineGroup, dob, readOnly }: Props) => {
         }
         if (status) {
             if (status === "Waiting") {
-                statusObj.color = "secondary"
+                statusObj.color = "tertiary"
                 statusObj.icon = waitingIcon
             }
             else if (status === "Denied") {
@@ -50,7 +53,7 @@ const VaccineGroup = ({ id, vaccineGroup, dob, readOnly }: Props) => {
                 statusObj.icon = deniedIcon
             }
             else if (status === "Approved") {
-                statusObj.color = "primary"
+                statusObj.color = "secondary"
                 statusObj.icon = approvedIcon
             }
             else if (status === "Completed") {
@@ -76,7 +79,13 @@ const VaccineGroup = ({ id, vaccineGroup, dob, readOnly }: Props) => {
                     {vaccineGroup.map((vaccine: IVaccinModal) => {
                         return (
                             <IonItem key={vaccine.id} button onClick={() => scheduleVaccine(vaccine.id)}>
-                                <IonIcon slot='start' size='small' icon={editIcon} className='ion-margin-end' />
+                                
+                                <IonImg
+                                    slot='start'
+                                    className='ion-margin-end'
+                                    style={{
+                                        width: "30px"
+                                    }} src={injection} />
                                 <IonText >
                                     <p style={{ fontSize: '12px' }}>{vaccine.title}</p>
                                 </IonText>

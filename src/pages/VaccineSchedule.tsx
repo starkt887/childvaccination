@@ -1,7 +1,7 @@
 import { IonButton, IonButtons, IonContent, IonDatetime, IonDatetimeButton, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSelect, IonSelectOption, IonText } from '@ionic/react'
 import React, { useEffect, useRef, useState } from 'react'
 import Header from '../components/Header'
-import { addIntervalToDOB, formatDate, formatTOISO, intoDaysMonthsYear, isScheduleDateValid, subInteralToScheduleDay } from '../utlils/dateFormater'
+import { addIntervalToDOB, formatDate, formatDateToCalendar, formatTOISO, intoDaysMonthsYear, isScheduleDateValid, subInteralToScheduleDay } from '../utlils/dateFormater'
 import { useParams } from 'react-router'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { IVaccinModal } from '../modals/vaccineModal'
@@ -12,7 +12,8 @@ import { useChildService } from '../services/childService'
 import { showToast } from '../features/toast/toastSlice'
 import { getMyVaccineList } from '../features/vaccine/vaccineSlice'
 import AddOnData from '../components/AddOnData'
-import { useCalendarService } from '../services/calendarService'
+import { AddToCalendarButton } from 'add-to-calendar-button-react'
+import { loadDone, loadPending } from '../features/loader/loaderSlice'
 
 
 type Params = {
@@ -24,7 +25,6 @@ const VaccineSchedule = () => {
   const { id } = useParams<Params>()
   const dispatch = useAppDispatch()
   const { scheduleVaccine, markAsComplete } = useChildService()
-  const { handleAuthAndCreateEvent, handleSignoutClick, gapiInited, gisInited } = useCalendarService()
 
 
 
@@ -51,6 +51,11 @@ const VaccineSchedule = () => {
     console.log('Filtering the selected vaccine')
     filterMyId()
   }, [childVaccineList])
+
+  useEffect(() => {
+    if (selectedVaccine?.status === "Approved")
+      syncWithGoogleCalendar()
+  }, [selectedVaccine])
 
 
   const filterMyId = () => {
@@ -85,6 +90,7 @@ const VaccineSchedule = () => {
 
   const schedule = async () => {
     if (isFormValid()) {
+      dispatch(loadPending())
       let status = await Promise.resolve(scheduleVaccine(
         userInfo,
         currentChild,
@@ -93,6 +99,7 @@ const VaccineSchedule = () => {
           scheduleDate: formatDate(scheduleDate),
           hospitalId: hospital
         }))
+       
       postOperations(status, "Vaccination Date Schedule")
     }
 
@@ -105,6 +112,7 @@ const VaccineSchedule = () => {
 
   const postOperations = (status: boolean, operation: string) => {
     if (status) {
+      dispatch(loadDone())
       console.log(`${operation} success!`)
       dispatch(showToast({ msg: `${operation} success!`, color: "success" }))
       dispatch(getMyVaccineList(currentChild.id!)) //refresh children state and set current child
@@ -113,21 +121,39 @@ const VaccineSchedule = () => {
     dispatch(showToast({ msg: `${operation} failed!`, color: "danger" }))
   }
 
-  const syncWithGoogleCalendar = () => {
-    let startDatetime = subInteralToScheduleDay(scheduleDate)
-    let rawEndDate = new Date(scheduleDate)
-    let endDatetime = new Date(
-      rawEndDate.getFullYear(),
-      rawEndDate.getMonth(),
-      rawEndDate.getDate(), 23, 59, 59).toISOString()
-    let location = hospitalList.find((hosp) => hosp.id == hospital)
+  const [calendarSync, setCaledarSync] = useState({
+    name: "",
+    options: ['Apple', 'Google'],
+    location: "",
+    startDate: "",
+    endDate: "",
+    startTime: "",
+    endTime: "",
+    timeZone: "Asia/Kolkata",
+  })
 
-    handleAuthAndCreateEvent(
-      startDatetime,
-      endDatetime,
-      `${currentChild.name} Vaccination: ${selectedVaccine?.title}`,
-      `${location?.name}`,
-      `Vaccination day is arrieved, Please be prepared and get your child to the Hospital on ${rawEndDate.toDateString()}`)
+  useEffect(() => {
+    console.log(calendarSync);
+
+  }, [calendarSync])
+
+
+  const syncWithGoogleCalendar = () => {
+    let name = `${currentChild.name} Vaccination: ${selectedVaccine?.title}`
+    let startDate = subInteralToScheduleDay(scheduleDate)
+    let startTime = "09:00"
+    let endDate = formatDateToCalendar(scheduleDate)
+    let endTime = "23:59"
+    let location = hospitalList.find((hosp) => hosp.id == hospital)?.name!
+    setCaledarSync({
+      ...calendarSync,
+      name,
+      startDate,
+      startTime,
+      endDate,
+      endTime,
+      location,
+    })
   }
 
   const getActionBasedOnStatus = () => {
@@ -137,8 +163,32 @@ const VaccineSchedule = () => {
       }
       if (selectedVaccine.status === "Approved") {
         return <>
-          <IonButton expand='block' onClick={syncWithGoogleCalendar}>Add to Calendar</IonButton>
-          <IonButton expand='block' onClick={markComplete}>Mark Complete</IonButton>
+
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
+
+            <AddToCalendarButton
+              name={calendarSync.name}
+              options={["Apple", "Google"]}
+              location={calendarSync.location}
+              startDate={calendarSync.startDate}
+              endDate={calendarSync.endDate}
+              startTime={calendarSync.startTime}
+              endTime={calendarSync.endTime}
+              timeZone={calendarSync.timeZone}
+              lightMode="dark"
+              size='3'
+              trigger='click'
+              buttonStyle="3d"
+              label='Set a reminder'
+              listStyle="dropdown" />
+            <IonButton expand='block' onClick={markComplete} color="success">Mark Complete</IonButton>
+          </div>
+
+
         </>
       }
       else

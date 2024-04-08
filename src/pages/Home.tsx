@@ -9,6 +9,7 @@ import { auth } from '../services/firebaseService'
 import { showToast } from '../features/toast/toastSlice'
 import homelogo from "../assets/homelogo.png"
 import { useUserService } from '../services/userService'
+import { loadDone, loadPending } from '../features/loader/loaderSlice'
 
 type Props = {}
 
@@ -70,7 +71,8 @@ const Home = (props: Props) => {
   })
 
   const login = () => {
-    if (isFormValid()) {
+    if (isFormValid()) {  
+      dispatch(loadPending())
       signInWithEmailAndPassword(auth, email, password)
         .then(async (userCredential) => {
           // Signed in 
@@ -81,13 +83,14 @@ const Home = (props: Props) => {
           dispatch(getUserProfile(user.uid))
           dispatch(showToast({ msg: 'Logged in....Success!', color: 'success' }))
           // ...
-
+          dispatch(loadDone())
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(errorCode, errorMessage)
           dispatch(showToast({ msg: 'Username/Password is wrong!', color: 'danger' }))
+          dispatch(loadDone())
         });
     }
   }

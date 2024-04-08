@@ -20,6 +20,7 @@ export type userInformation = {
     email: string
     mobile?: string
     address?: string//optionals
+    profilepic?: string//optinal
     password?: string//only used for registration
 }
 export interface user {
@@ -35,7 +36,8 @@ const initialState: user = {
         name: '',
         email: '',
         mobile: '',
-        address: ''
+        address: '',
+        profilepic: 'https://picsum.photos/100/100'
     },
     userAuth: {
         isAuth: false
@@ -68,9 +70,6 @@ export const userSlice = createSlice({
             // console.log(action.payload)
             state.userAuth = action.payload
         },
-        updateProfile: (state, action: PayloadAction<userInformation>) => {
-            state.userInfo = { ...state.userInfo, ...action.payload }
-        },
         logoutUser: (state) => {
 
             state.userAuth = {
@@ -81,7 +80,8 @@ export const userSlice = createSlice({
                 name: '',
                 email: '',
                 mobile: '',
-                address: ''
+                address: '',
+                profilepic: ''
             }
             state.error = ''
         }
@@ -92,7 +92,7 @@ export const userSlice = createSlice({
                 state.loading = true
             })
             .addCase(getUserProfile.fulfilled, (state, action: PayloadAction<userInformation>) => {
-                state.userInfo = action.payload
+                state.userInfo = { ...state.userInfo, ...action.payload }
                 state.loading = false
             })
             .addCase(getUserProfile.rejected, (state) => {

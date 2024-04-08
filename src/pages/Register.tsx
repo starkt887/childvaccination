@@ -9,14 +9,11 @@ import { showToast } from '../features/toast/toastSlice'
 import { useUserService } from '../services/userService'
 import { userInformation } from '../features/auth/authSlice'
 import appback from "../assets/appback.jpg"
+import { loadDone, loadPending } from '../features/loader/loaderSlice'
 
 type Props = {}
 
 const Register = (props: Props) => {
-
-
-
-
     const dispatch = useAppDispatch()
     const { createProfile } = useUserService()
     const history = useHistory();
@@ -73,7 +70,7 @@ const Register = (props: Props) => {
 
     const register = () => {
         if (isFormValid()) {
-
+            dispatch(loadPending())
             createUserWithEmailAndPassword(auth, email!, password!)
                 .then(async (userCredential) => {
                     // Signed up 
@@ -87,30 +84,22 @@ const Register = (props: Props) => {
                     }
                     const result = await Promise.resolve(createProfile(user))
                     if (result) {
+                        dispatch(loadDone())
                         dispatch(showToast({ msg: 'Registered User Success!', color: "success" }))
                         setTimeout(() => history.goBack(), 3000)
                         return
                     }
+                    dispatch(loadDone())
                     dispatch(showToast({ msg: 'Registered User Failure!', color: "danger" }))
-                    // updateProfile(Ruser, {
-                    //     displayName: name,
-                    // }).then((res) => {
-                    //     console.log("profile update")
-                    //     dispatch(showToast({ msg: 'Registered User Success!', color: "success" }))
-                    //     setTimeout(() => history.goBack(), 3000)
-                    // }).catch((error) => {
-                    //     console.log(error)
-                    // });
                 })
                 .catch((error: any) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     console.log(errorCode, errorMessage)
                     // ..
+                    dispatch(loadDone())
                 });
         }
-
-
     }
 
     return (

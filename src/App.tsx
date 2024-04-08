@@ -1,18 +1,17 @@
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, IonToast, setupIonicReact } from '@ionic/react';
+import { IonApp, IonLoading, IonRouterOutlet, IonToast, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Dashboard from './pages/Dashboard';
 import Router from './router/Router';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { resetToast } from './features/toast/toastSlice';
-import { useCalendarService } from './services/calendarService';
 
 
 const App = () => {
 
   const { isOpen, toast, interval } = useAppSelector(state => state.toastReducer)
   const dispatch = useAppDispatch()
-
+const loading=useAppSelector(state=>state.loaderReducer.loading)
 
   return (
     <IonApp>
@@ -25,6 +24,11 @@ const App = () => {
         duration={interval}
         onDidDismiss={() => dispatch(resetToast())}
       ></IonToast>
+         <IonLoading  
+         className='custom_loader'
+         isOpen={loading}
+         />
+ 
     </IonApp>
   )
 }

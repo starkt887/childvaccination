@@ -25,14 +25,17 @@ const Dashboard: React.FC = () => {
 
   const uid = useAppSelector<string>(state => state.userReducer.userInfo.uid)
   const children = useAppSelector(state => state.childrenReducer.children)
-
+  const vaccineList = useAppSelector(state => state.vaccineReducer.vaccineList)
+  const [totalVaccines, setTotalVaccines] = useState(0)
 
   const dispatch = useAppDispatch()
   const [isAddChildOpen, setIsAddChildOpen] = useState(false)
 
-  const { vaccineReminders, setVaccineReminders, subscribeToTodaysVaccineDate } = useNotificationService()
+  const { vaccineReminders, subscribeToTodaysVaccineDate } = useNotificationService()
 
   useEffect(() => {
+    // console.log("UID:",uid);
+
     dispatch(getMyChildrenAT(uid)).unwrap()
       .then((responseChidlren) => {
         console.log("Children loaded", responseChidlren)
@@ -45,17 +48,18 @@ const Dashboard: React.FC = () => {
 
     dispatch(getVaccineList()).unwrap().then((resp) => {
       console.log(resp)
+      setTotalVaccines(resp.flat(1).length)
     }).catch((error: any) => {
       console.log(error)
     })
 
-  }, [])
+  }, [uid])
 
   useEffect(() => {
     console.log("Vaccine reminders", vaccineReminders)
     // as soon as listener initilizes the vaccineReminders, settle in with vaccineSlice
     dispatch(setTodaysVaccines(vaccineReminders))
-  
+
   }, [vaccineReminders])
 
 
@@ -78,23 +82,23 @@ const Dashboard: React.FC = () => {
                   <IonIcon size='large' icon={arrowIcon} />
                 </IonLabel>
                 <IonLabel>
-                  <h2 className={classes.labeltitle}>Reports</h2>
+                  <h2 className={classes.labeltitle}>Children</h2>
                 </IonLabel>
                 <IonLabel>
-                  <h2 className={classes.labelvalue}>12</h2>
+                  <h2 className={classes.labelvalue}>{children.length}</h2>
                 </IonLabel>
               </IonCol>
               <IonCol className={classes.col}>
 
                 <IonLabel className={classes.labelflex}>
-                  Completed
+                  Total
                   <IonIcon size='large' icon={arrowIcon} />
                 </IonLabel>
                 <IonLabel>
                   <h2 className={classes.labeltitle}>Vaccines</h2>
                 </IonLabel>
                 <IonLabel>
-                  <h2 className={classes.labelvalue}>12</h2>
+                  <h2 className={classes.labelvalue}>{totalVaccines}</h2>
                 </IonLabel>
               </IonCol>
             </IonRow>
@@ -109,7 +113,7 @@ const Dashboard: React.FC = () => {
             {children.map((child: IChildModal) => {
               return <IonItem key={child.id} detail button routerLink={`/auth/dashboard/child/${child.id}`} >
                 <IonThumbnail slot="start">
-                  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                  <img alt="Silhouette of mountains" src={child.profilepic} />
                 </IonThumbnail>
                 <IonLabel>
                   {child.name}
